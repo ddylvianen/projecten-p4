@@ -1,0 +1,17 @@
+how to setup the env:
+    1.open a terminal in the project folder
+    2.run: docker compose up -d --build
+    3.open a browser and go to localhost:8081 / in workbench
+    4.login: user:root, password:root
+    5.copy/paste it in the qeury side and run/run the fitforfunscreate.sql
+
+thats it!
+
+for the next time all you have to do is run: docker compose up -d
+
+if your done with the project dont forget to close the container
+you can do so with: docker compose down
+
+the homepage is at localhost/
+the reserveringpage is at localhost/reservering
+the lessenoverzicht is at localhost/overzicht

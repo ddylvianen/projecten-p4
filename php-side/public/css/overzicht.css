@@ -1,0 +1,14 @@
+/* main{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.table-responsive{
+    width: 90%;
+    margin: 0 auto;
+}
+
+td{
+    font-family: 'inter', sans-serif;
+}

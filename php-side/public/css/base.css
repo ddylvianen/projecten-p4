@@ -1,0 +1,333 @@
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+:root{
+    --background-color: #FFFF;
+    --background-color-light: #F8F9FA;
+
+    --text-color: #212529;
+    --text-color-light: #495057;
+    --text-color-lighter: #6C757D;
+
+    --accent-color: #FFA500;
+    --accent-color-hover: #FFA500;
+
+    --card-back: #F5F5F5;
+    --card-back-hover: #E9ECEF;
+    --card-text: #212529;
+    --card-text-hover: #495057;
+    --card-border: #CED4DA;
+    --card-border-hover: #ADB5BD;
+    --card-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+
+html {
+    font-size: 62.5%;
+    font-family: 'bangers', cursive;
+}
+
+
+body{
+    font-size: 1.6rem;
+    line-height: 1.6;
+    background-color: var(--card-back);
+    color: var(--text-color);
+    font-family: 'bangers', cursive;
+}
+
+span{
+    flex-grow: 1;
+    grid-column: span 2;
+}
+
+.cont{
+    max-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main{
+    flex-grow: 1;
+}
+
+section{
+    margin: 5rem auto;
+    width: 90%;
+}
+
+
+.btn{
+    height: min-content;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+.btn:hover{
+    background-color: var(--accent-color-hover);
+}
+
+
+
+.week > .week-nav{
+    max-width: 300px;
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+.week > .current-week{
+    width: 100px;
+    color: var(--accent-color);
+    text-decoration: none;
+    cursor: pointer;
+    float: right;
+    text-align: center;
+}
+
+.week > i{
+    font-size: 2rem;
+    cursor: pointer;
+    /* text-align: center; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent-color);
+}
+
+.week > i:hover{
+    color: var(--accent-color-hover);
+}
+
+.week > h1{
+    font-size: 3rem;
+    font-weight: 700;
+    /* margin-bottom: 1rem; */
+}
+
+.btn{
+    height: min-content;
+    padding: 2rem 3rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--accent-color);
+    color: white;
+    cursor: pointer;
+}
+
+.btn:hover{
+    background-color: var(--accent-color-hover);
+}
+
+
+.modal, .modail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1000;
+}
+
+.modal {
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modail {
+    top: 2rem;
+    right: 2rem;
+    height: 10vh;
+    background-color: var(--accent-color);
+    border-radius: 14px;
+}
+
+.modal-content, .modail > div.modail-content {
+    background-color: var(--card-back);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+}
+
+.modal-content {
+    max-width: 500px;
+    height: 250px;
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    padding: 1rem 2rem;
+    gap: 1.5rem;
+}
+
+.modail > div.modail-content {
+    padding: 5rem;
+}
+
+.modal-content div.border {
+    border-top: 1px solid var(--text-color-lighter);
+    border-bottom: 1px solid var(--text-color-lighter);
+}
+
+.modal-content .text {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'inter', sans-serif;
+    font-size: 1.5rem;
+}
+
+.modal-content .text p {
+    text-align: center;
+}
+
+.modal-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-content .modal-header h2 {
+    font-size: 3rem;
+}
+
+.modal-content .modal-header i, .modail > i#removebtn {
+    font-size: 2.5rem;
+    cursor: pointer;
+    color: var(--text-color);
+}
+
+.modal-content .modal-header i:hover, .modail > i#removebtn:hover {
+    color: var(--accent-color);
+}
+
+.modail > i#removebtn {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    z-index: 1001;
+}
+
+.modal-content .modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    gap: 1rem;
+}
+
+
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    
+}
+
+.modal-content {
+    background-color: #fff; /* fallback if --card-back is not defined */
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 90%;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    animation: fadeInUp 0.3s ease-in-out;
+    position: relative;
+    margin: auto; /* Center horizontally */
+    top: 50%; /* Center vertically */
+    transform: translateY(-50%); /* Adjust for vertical centering */
+}
+
+/* Header */
+.modal-content .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-content .modal-header h2 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.modal-content .modal-header i {
+    font-size: 1.8rem;
+    cursor: pointer;
+    color: var(--text-color, #333);
+}
+
+.modal-content .modal-header i:hover {
+    color: var(--accent-color, #007bff);
+}
+
+/* Body text */
+.modal-content .text {
+    text-align: center;
+    font-size: 1.2rem;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Actions */
+.modal-content .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* Optional animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.btn {
+    padding: 0.5rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background-color: var(--accent-color, #007bff);
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #ccc;
+    color: #333;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}

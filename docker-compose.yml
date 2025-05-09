@@ -1,0 +1,58 @@
+
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: php_app
+    volumes:
+      - ./logs/apache:/var/log/apache2  # Mount logs
+      - ./php-side:/var/www/html  # Set public as document root
+      - ./php.ini:/usr/local/etc/php/php.ini
+    ports:
+      - "80:80"
+    depends_on:
+      - db
+      - mailhog
+
+  db:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: fitforfun
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./logs/mysql:/var/log/mysql  # Mount logs
+
+    ports:
+      - "3306:3306"
+
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: mailhog
+    restart: always
+    volumes:
+      - ./logs/mailhog:/var/log/mailhog  # Mount logs
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+volumes:
+  db_data:

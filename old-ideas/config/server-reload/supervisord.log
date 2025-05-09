@@ -1,0 +1,13 @@
+2025-02-15 21:41:31,917 CRIT Supervisor is running as root.  Privileges were not dropped because no user is specified in the config file.  If you intend to run as root, you can set user=root in the config file to avoid this message.
+2025-02-15 21:41:31,923 INFO supervisord started with pid 1
+2025-02-15 21:41:32,930 INFO spawned: 'reload-server' with pid 7
+2025-02-15 21:41:32,935 INFO spawned: 'watchdog' with pid 8
+2025-02-15 21:41:32,971 WARN exited: reload-server (exit status 0; not expected)
+2025-02-15 21:41:34,064 INFO spawned: 'reload-server' with pid 16
+2025-02-15 21:41:34,065 INFO success: watchdog entered RUNNING state, process has stayed up for > than 1 seconds (startsecs)
+2025-02-15 21:41:34,114 WARN exited: reload-server (exit status 0; not expected)
+2025-02-15 21:41:36,126 INFO spawned: 'reload-server' with pid 23
+2025-02-15 21:41:36,172 WARN exited: reload-server (exit status 0; not expected)
+2025-02-15 21:41:39,182 INFO spawned: 'reload-server' with pid 30
+2025-02-15 21:41:39,236 WARN exited: reload-server (exit status 0; not expected)
+2025-02-15 21:41:40,239 INFO gave up: reload-server entered FATAL state, too many start retries too quickly

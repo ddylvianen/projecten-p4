@@ -1,0 +1,30 @@
+main{
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center; 
+    /* height: 100vh;  */
+}
+
+.container-chart{ 
+    width: 100%; 
+    max-width: 800px; 
+    margin: auto; 
+    max-height: 500px; 
+    padding: 50px; 
+}
+
+.no-data{
+    margin: 0 auto;
+    text-align: center;
+}
+
+.no-data h1{
+    font-size: 6rem;
+    color: #333;
+}
+
+.no-data p{
+    font-size: 2rem;
+    color: #666;
+}
