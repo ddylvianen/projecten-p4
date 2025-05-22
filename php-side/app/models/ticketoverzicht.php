@@ -29,7 +29,7 @@ class TicketOverzicht
     }
 
     // Scan ticket (status veranderen)
-    public function scanTicket($ticketId, $nieuweStatus = 'gescand')
+    public function scanTicket($ticketId, $nieuweStatus = 'bezet')
     {
         $sql = "UPDATE Ticket SET Status = :status, Datumgewijzigd = NOW() WHERE Id = :id";
         $stmt = $this->pdo->prepare($sql);
