@@ -1,11 +1,12 @@
 <?php
+<?php
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../models/Medewerker.php';
 
 class MedewerkerController {
     public function index() {
         $database = new Database();
-        $db = $database->connect();
+        $db = $database->getConnection();
 
         $medewerkerModel = new Medewerker($db);
         $medewerkers = $medewerkerModel->getAll();
