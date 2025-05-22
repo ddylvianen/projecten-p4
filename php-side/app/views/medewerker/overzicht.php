@@ -17,13 +17,19 @@
             <th>Naam</th>
             <th>Soort</th>
         </tr>
-        <?php foreach ($medewerkers as $medewerker): ?>
+        <?php if (!empty($medewerkers)): ?>
+            <?php foreach ($medewerkers as $medewerker): ?>
+                <tr>
+                    <td><?= htmlspecialchars($medewerker->Nummer) ?></td>
+                    <td><?= htmlspecialchars($medewerker->Voornaam . ' ' . $medewerker->Achternaam) ?></td>
+                    <td><?= htmlspecialchars($medewerker->Medewerkersoort) ?></td>
+                </tr>
+            <?php endforeach; ?>
+        <?php else: ?>
             <tr>
-                <td><?= htmlspecialchars($medewerker['Nummer']) ?></td>
-                <td><?= htmlspecialchars($medewerker['Voornaam'] . ' ' . $medewerker['Achternaam']) ?></td>
-                <td><?= htmlspecialchars($medewerker['Medewerkersoort']) ?></td>
+                <td colspan="3" style="text-align:center;">Geen medewerkers gevonden.</td>
             </tr>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </table>
 </body>
 </html>
