@@ -3,9 +3,9 @@
  * De database verbindingsgegevens
  */
 define('DB_HOST', 'db');
-define('DB_NAME', 'fitforfun');
-define('DB_USER', 'user');
-define('DB_PASS', 'password');
+define('DB_NAME', 'TheaterDB');
+define('DB_USER', 'root');
+define('DB_PASS', 'root');
 
 
 /**
