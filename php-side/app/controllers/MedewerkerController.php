@@ -1,6 +1,5 @@
 <?php
-<?php
-require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../libraries/Database.php';
 require_once __DIR__ . '/../models/Medewerker.php';
 
 class MedewerkerController {

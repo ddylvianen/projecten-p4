@@ -109,4 +109,13 @@ class Database
     {
         return $this->dbHandler->lastInsertId();
     }
+
+// ...bestaande code...
+
+    public function getConnection()
+    {
+        return $this->dbHandler;
+    }
+
+// sluit de class af
 }
