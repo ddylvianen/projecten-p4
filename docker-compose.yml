@@ -21,7 +21,7 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: fitforfun
+      MYSQL_DATABASE: theatherdb
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     volumes:
