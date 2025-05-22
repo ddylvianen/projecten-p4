@@ -15,12 +15,18 @@
                     <thead>
                         <tr>
                             <th>Voorstelling</th>
+                            <th>Relatienummer</th>
+                            <th>Nummer</th>
+                            <th>Barcode</th>
                             <th>Status</th>
                             <th>Datum</th>
+                            <th>Tijd</th>
+                            <th>Tarief</th>
+                            <th>Opmerking</th>
                             <th>Acties</th>
-                            <th> 
+                            <th>
                                 <button type="button" class="btn btn-link p-0" data-bs-toggle="modal"
-                                    data-bs-target="#scanModal"title="Scan">
+                                    data-bs-target="#scanModal" title="Scan">
                                     <i class="fas fa-qrcode"></i>
                                 </button>
                             </th>
@@ -29,25 +35,31 @@
                     <tbody>
                         <?php if (!empty($data['tickets'])): ?>
                             <?php foreach ($data['tickets'] as $ticket): ?>
-                                <tr id="<?php echo htmlspecialchars($ticket->Id); ?>">
+                                <tr>
                                     <td><?php echo htmlspecialchars($ticket->VoorstellingNaam); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Relatienummer); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Nummer); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Barcode); ?></td>
                                     <td><?php echo htmlspecialchars($ticket->Status); ?></td>
                                     <td><?php echo htmlspecialchars($ticket->Datum); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Tijd); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Tarief); ?></td>
+                                    <td><?php echo htmlspecialchars($ticket->Opmerking); ?></td>
                                     <td>
                                         <a href="<?php echo URLROOT . '/tickets/edit/' . $ticket->Id; ?>"
                                             class="btn btn-warning btn-sm">Veranderen</a>
-                                        <!-- Verwijder knop -->
                                         <a href="<?php echo URLROOT . '/tickets/delete/' . $ticket->Id; ?>"
                                             class="btn btn-danger btn-sm"
                                             onclick="return confirm('Weet je zeker dat je dit ticket wilt verwijderen?');">
                                             Verwijder
                                         </a>
                                     </td>
+                                    <td></td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>
-                                <td colspan="4" class="text-center">Geen tickets gevonden.</td>
+                                <td colspan="11" class="text-center">Geen tickets gevonden.</td>
                             </tr>
                         <?php endif; ?>
                     </tbody>

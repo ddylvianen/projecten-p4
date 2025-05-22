@@ -16,15 +16,12 @@ class overzichttickets extends BaseController
             $scannedTicket = trim($_POST['scanned_ticket']);
             if (!empty($scannedTicket)) {
                 // Save the scanned ticket using the model
-                $this->model->scanTicket($scannedTicket);
-
+                $status = $this->model->scanTicket($scannedTicket);
             }
         }
 
         // Get all tickets from the model
         $tickets = $this->model->getTickets();
-
-        // Send tickets to the view
-        $this->view('overzichttickets/index', ['tickets' => $tickets]);
+        $this->view('overzichttickets/index', ['tickets' => $tickets, 'message' => $status ?? null]);
     }
 }

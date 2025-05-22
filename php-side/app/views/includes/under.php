@@ -6,12 +6,9 @@
 
 <script> <?php echo $data['redirect'] ?? '';?></script>
 <?php if (isset($data['message'])){?>
-            <div id="modail-message" class="modail">
-            <i class="fa-solid fa-x" id="removebtn"></i>
-            <div class="modail-content">
-                <?php echo $data['message'] ?? '';?>
-            </div>
-            </div>
+            <script>
+                alert("<?php echo $data['message'] ?? '';?>");
+            </script>
 <?php } ?>
 </body>
 </html>

@@ -96,6 +96,7 @@ class Database
 
     public function single()
     {
+        $this->statement->execute();
         $result = $this->statement->fetch(PDO::FETCH_OBJ);
         $this->statement->closeCursor();
         return $result;
