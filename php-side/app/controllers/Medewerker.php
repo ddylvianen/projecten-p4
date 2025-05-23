@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../libraries/BaseController.php';
 
-class Medewerker extends BaseController
+class medewerker extends BaseController
 {
     public function index($data = [], $params = [])
     {

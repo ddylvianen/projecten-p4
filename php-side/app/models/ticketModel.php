@@ -24,11 +24,33 @@ class ticketModel
     // Scan ticket (status veranderen)
     public function scanTicket($barcode, $nieuweStatus = 'bezet')
     {
-        $sql = "UPDATE Ticket SET Status = :status, Datumgewijzigd = NOW() WHERE Barcode = :barcode";
-        $this->db->query($sql);
-        $this->db->bind(':status', $nieuweStatus);
-        $this->db->bind(':barcode', $barcode);
-        return $this->db->execute();
+        try {
+            // Controleer of het ticket al gescand is (status is niet 'bezet')
+            $checkSql = "SELECT Status FROM Ticket WHERE Barcode = :barcode";
+            $this->db->query($checkSql);
+            $this->db->bind(':barcode', $barcode);
+            $ticket = $this->db->single();
+
+            if (!$ticket) {
+            // Ticket bestaat niet
+            return false;
+            }
+
+            if ($ticket['Status'] !== 'bezet') {
+            // Ticket is al gescand of heeft een andere status
+            return false;
+            }
+
+            // Update status naar nieuwe status
+            $sql = "UPDATE Ticket SET Status = :status, Datumgewijzigd = NOW() WHERE Barcode = :barcode";
+            $this->db->query($sql);
+            $this->db->bind(':status', $nieuweStatus);
+            $this->db->bind(':barcode', $barcode);
+            return $this->db->execute();
+        } catch (Exception $e) {
+            // Log eventueel de foutmelding
+            return false;
+        }
     }
 
     // Verwijder ticket

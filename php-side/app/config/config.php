@@ -2,10 +2,10 @@
 /**
  * Database verbindingsgegevens
  */
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'db');
 define('DB_NAME', 'TheaterDB'); // Jouw database naam
 define('DB_USER', 'root');      // Database gebruiker
-define('DB_PASS', '');
+define('DB_PASS', 'root');
 
 
 /**
