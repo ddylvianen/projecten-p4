@@ -1,30 +1,31 @@
 <footer>
-    <h1 class="logo">FitForFun</h1>
-    <!-- <section>
-                <h2>Contact</h2>
-                <p>
-                    Heb je vragen of opmerkingen? Neem dan contact met ons op via onderstaande gegevens.
-                </p>
-                <div>
-                    <h3>Telefoon</h3>
-                    <p>06-12345678</p>
+    <div class="footer-content">
+        <div class="footer-main">
+            <h1 class="logo">Theater Podium</h1>
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h3>Contact</h3>
+                    <p>Theaterstraat 42<br>1012 AB Amsterdam</p>
+                    <p>020-1234567<br>info@theaterpodium.nl</p>
                 </div>
-                <div>
-                    <h3>Email</h3>
-                    <p>
-                        <a href="">
-                        </a>
-                    </p>
+                <div class="footer-column">
+                    <h3>Openingstijden</h3>
+                    <p>Kassa: ma-za 11:00-19:00<br>zo 12:00-17:00</p>
+                    <p>Foyer: vanaf 1 uur voor aanvang</p>
                 </div>
-                <div>
-                    <h3>Adres</h3>
-                    <p>
-                        FitForFun
-                        Amsterdam
-                        1012 AB Amsterdam
-                    </p>
+                <div class="footer-column">
+                    <h3>Volg ons</h3>
+                    <div class="social-icons">
+                        <i class="fa-brands fa-facebook"></i>
+                        <i class="fa-brands fa-instagram"></i>
+                        <i class="fa-brands fa-twitter"></i>
+                        <i class="fa-brands fa-youtube"></i>
+                    </div>
                 </div>
-            </section> -->
-    <span></span>
-    <p>FitForFun &copy; 2021</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>Theater Podium &copy; 2023 | <a href="#">Privacy</a> | <a href="#">Algemene voorwaarden</a></p>
+        </div>
+    </div>
 </footer>
