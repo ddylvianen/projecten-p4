@@ -24,7 +24,7 @@ class login extends BaseController
 
     private function login(){
         $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
-        $password = filter_input(INPUT_POST, 'password', FILTER_SANITIZE_SPECIAL_CHARS);
+        $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
         $user = $this->userModel->login($username, $password);
 
         if($user){
@@ -36,9 +36,9 @@ class login extends BaseController
     }
 
     private function createUserSession($user){
-        $_SESSION['user_id'] = $user['id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
+        $_SESSION['user_id'] = $user->id;
+        $_SESSION['username'] = $user->username;
+        $_SESSION['role'] = $user->role;
         $this->redirect('homepages/index', ['message' => 'Welkom ' . $_SESSION['username']]);
     }
 

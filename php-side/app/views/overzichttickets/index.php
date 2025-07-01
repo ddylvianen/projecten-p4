@@ -9,6 +9,10 @@
     <div class="cont">
         <?php require_once APPROOT . '/views/includes/navbar.php'; ?>
         <main>
+            <!-- Add Ticket Button -->
+            <div class="mb-3">
+                <a href="<?php echo URLROOT . '/overzichttickets/add'; ?>" class="btn btn-success">Ticket toevoegen</a>
+            </div>
             <!-- 1 table = one week -->
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -34,14 +38,8 @@
                                     <td><?php echo htmlspecialchars($ticket->Status); ?></td>
                                     <td><?php echo htmlspecialchars($ticket->Datum); ?></td>
                                     <td>
-                                        <a href="<?php echo URLROOT . '/tickets/edit/' . $ticket->Id; ?>"
-                                            class="btn btn-warning btn-sm">Veranderen</a>
-                                        <!-- Verwijder knop -->
-                                        <a href="<?php echo URLROOT . '/tickets/delete/' . $ticket->Id; ?>"
-                                            class="btn btn-danger btn-sm"
-                                            onclick="return confirm('Weet je zeker dat je dit ticket wilt verwijderen?');">
-                                            Verwijder
-                                        </a>
+                                        <a href="<?php echo URLROOT . '/overzichttickets/update?barcode=' . urlencode($ticket->Barcode); ?>" class="btn btn-warning btn-sm">Bewerken</a>
+                                        <a href="<?php echo URLROOT . '/overzichttickets/delete?id=' . urlencode($ticket->Id); ?>" class="btn btn-danger btn-sm" onclick="return confirm('Weet je zeker dat je dit ticket wilt verwijderen?');">Verwijder</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
