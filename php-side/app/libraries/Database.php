@@ -44,7 +44,7 @@ class Database
              */
             error_log("Error on line " . __LINE__ . " in method " . __METHOD__ . " in file " . __FILE__ . ": " . $e->getMessage());
             echo "Op dit moment kunnen we u niet helpen... probeer het later nog eens";
-            header('Refresh:30; url=' .URLROOT . '/homepages/index');
+            exit();
         }
     }
 

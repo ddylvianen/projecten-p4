@@ -1,23 +1,31 @@
 <?php
 /**
- * De database verbindingsgegevens
+ * Database verbindingsgegevens
  */
 define('DB_HOST', 'db');
-define('DB_NAME', 'TheaterDB');
-define('DB_USER', 'root');
+define('DB_NAME', 'TheaterDB'); // Jouw database naam
+define('DB_USER', 'root');      // Database gebruiker
 define('DB_PASS', 'root');
 
 
 /**
- * De naam van de virtualhost
+ * URL van je project (virtual host of localhost)
  */
-define('URLROOT', 'localhost');
+define('URLROOT', 'http://localhost'); // Voeg http(s) toe voor volledigheid
 
 /**
- * Het pad naar de folder app
+ * Absolute pad naar de 'app' directory
+ * __DIR__ is de map waarin dit bestand (config.php) staat,
+ * dus met '../' ga je een map omhoog en dan naar 'app'.
+ * Pas dit aan als je config.php ergens anders staat.
  */
-define('APPROOT', dirname(dirname(__FILE__)));
+define('APPROOT', realpath(__DIR__ . '/..'));
 
-if (!isset($_SESSION)){
+
+
+/**
+ * Start de sessie als die nog niet gestart is
+ */
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }

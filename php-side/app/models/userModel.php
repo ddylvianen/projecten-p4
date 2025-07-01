@@ -12,48 +12,54 @@ class userModel
     // Handles user login by verifying username and password
     public function login($username, $password)
     {
-        $user = $this->getuser($username, $password);
-        if ($user) {
-            return $user; // Return user data if login is successful
+        $user = $this->getUser($username);
+        if ($user && password_verify($password, $user->Wachtwoord)) {
+            $result = new stdClass();
+            $result->id = $user->Id;
+            $result->username = $user->Gebruikersnaam;
+            $result->role = $this->getUserRole($user->Id);
+            return $result;
         } else {
             return null; // Return null if login fails
         }
     }
 
-    // Retrieves user data from the database and verifies the password
-    private function getuser($username, $password)
+    // Retrieves user data from the database by username
+    private function getUser($username)
     {
-        $this->db->query('CALL SLuser(:username)'); // Call stored procedure to fetch user data
-        $this->db->bind(':username', $username); // Bind the username parameter
+        $this->db->query('SELECT * FROM Gebruiker WHERE Gebruikersnaam = :username LIMIT 1');
+        $this->db->bind(':username', $username);
         $this->db->execute();
-        $userdb = $this->db->single(); // Fetch a single user record
-
-        $hassedpassword = $userdb ? $userdb->Wachtwoord : null; // Get hashed password from the database
-        if (password_verify($password, $hassedpassword)) { // Verify the provided password
-            return [
-                'id' => $userdb->id,
-                'username' => $userdb->Gebruikersnaam,
-                'role' => $userdb->rol
-            ];
-        } else {
-            return false; // Return false if password verification fails
-        }
+        return $this->db->single();
     }
 
-    // Handles user signup by inserting data into multiple tables
+    // Retrieves the user's role from the Rol table
+    private function getUserRole($gebruikerId)
+    {
+        $this->db->query('SELECT Naam FROM Rol WHERE GebruikerId = :gebruikerid AND Isactief = 1 LIMIT 1');
+        $this->db->bind(':gebruikerid', $gebruikerId);
+        $this->db->execute();
+        $role = $this->db->single();
+        return $role ? $role->Naam : null;
+    }
+
+    // Handles user signup by inserting data into Gebruiker and Rol
     public function signup($data)
     {
         try {
             $this->db->beginTransaction(); // Start a database transaction
 
-            // Insert a new person and capture the ID
-            $id = $this->Insertpersoon($data);
-
-            // Insert a new user linked to the person ID
-            $id = $this->InsertGebruiker($data, $id);
+            // Insert a new user into Gebruiker
+            $gebruikerId = $this->insertGebruiker($data);
+            if (!$gebruikerId) {
+                throw new Exception('Gebruiker kon niet worden aangemaakt.');
+            }
 
             // Assign a role to the newly created user
-            $id = $this->InsertRol($id);
+            $rolId = $this->insertRol($gebruikerId);
+            if (!$rolId) {
+                throw new Exception('Rol kon niet worden toegekend.');
+            }
 
             $this->db->endTransaction(); // Commit the transaction
             return true;
@@ -66,45 +72,28 @@ class userModel
         }
     }
 
-    // Inserts a new person into the database
-    private function Insertpersoon($data)
+    // Inserts a new user into the Gebruiker table
+    private function insertGebruiker($data)
     {
-        $this->db->query('CALL InsertPersoon(:voornaam, :tussenvoegsel, :achternaam, :geboortedatum)');
+        $this->db->query('INSERT INTO Gebruiker (Voornaam, Tussenvoegsel, Achternaam, Gebruikersnaam, Wachtwoord, IsIngelogd, Ingelogd, Uitgelogd, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd) VALUES (:voornaam, :tussenvoegsel, :achternaam, :gebruikersnaam, :wachtwoord, 0, NULL, NULL, 1, NULL, NOW(), NOW())');
         $this->db->execute([
             ':voornaam' => $data['voornaam'],
             ':tussenvoegsel' => $data['tussenvoegsel'],
             ':achternaam' => $data['achternaam'],
-            ':geboortedatum' => $data['geboortedatum']
-        ]);
-        $result = $this->db->single(); // Fetch the result of the stored procedure
-        $this->db->closeCursor();
-        return $result ? $result->PersoonID : null; // Return the inserted person ID
-    }
-
-    // Inserts a new user into the database linked to a person ID
-    private function InsertGebruiker($data, $persoonId)
-    {
-        $this->db->query('CALL InsertGebruiker(:persoonid, :gebruikersnaam, :wachtwoord)');
-        $this->db->execute([
-            ':persoonid' => $persoonId, // Use the captured person ID
             ':gebruikersnaam' => $data['gebruikersnaam'],
-            ':wachtwoord' => password_hash($data['wachtwoord'], PASSWORD_DEFAULT) // Hash the password
+            ':wachtwoord' => password_hash($data['wachtwoord'], PASSWORD_DEFAULT)
         ]);
-        $result = $this->db->single(); // Fetch the result of the stored procedure
-        $this->db->closeCursor();
-        return $result ? $result->GebruikerID : null; // Return the inserted user ID
+        return $this->db->lastInsertId();
     }
 
-    // Assigns a role to a user
-    private function InsertRol($gebruikerId)
+    // Assigns a default role to a user in the Rol table
+    private function insertRol($gebruikerId)
     {
-        $this->db->query('CALL InsertRol(:gebruikerid, :rol)');
+        $this->db->query('INSERT INTO Rol (GebruikerId, Naam, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd) VALUES (:gebruikerid, :rol, 1, NULL, NOW(), NOW())');
         $this->db->execute([
-            ':gebruikerid' => $gebruikerId, // Use the captured user ID
-            ':rol' => 'gastgebruiker' // Assign a default role
+            ':gebruikerid' => $gebruikerId,
+            ':rol' => 'Bezoeker' // Default role
         ]);
-        $result = $this->db->single(); // Fetch the result of the stored procedure
-        $this->db->closeCursor();
-        return $result ? $result->RolID : null; // Return the inserted role ID
+        return $this->db->lastInsertId();
     }
 }
