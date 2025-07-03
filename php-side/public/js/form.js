@@ -60,7 +60,7 @@ function setupFormFeaturesJQ(formId, requiredFields, changeAlert, requireDirty) 
             });
             if (!changed) {
                 e.preventDefault();
-                alert("Je hebt geen wijzigingen gemaakt aan het ticket.");
+                alert("Er zijn geen wijzigingen om op te slaan");
             }
         }
     });
