@@ -59,9 +59,15 @@ class ticketModel
             $sql = "DELETE FROM Ticket WHERE Id = :id";
             $this->db->query($sql);
             $this->db->bind(':id', $ticketId, PDO::PARAM_INT);
-            return $this->db->execute();
+            $result = $this->db->execute();
+            if ($result === false) {
+                $errorInfo = $this->db->getErrorInfo();
+                error_log("[TicketModel:deleteTicket] Database error: " . print_r($errorInfo, true) . "\n", 3, '/tmp/error.log');
+                return "Er is een databasefout opgetreden bij het verwijderen van het ticket.";
+            }
+            return $result;
         } catch (Exception $e) {
-            error_log("[TicketModel:deleteTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            error_log("[TicketModel:deleteTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, '/tmp/error.log');
             return "Er is een fout opgetreden bij het verwijderen van het ticket. Probeer het later opnieuw.";
         }
     }
@@ -80,12 +86,16 @@ class ticketModel
     public function addTicket($ticket)
     {
         try {
-            // Haal datum en tijd op van de voorstelling
-            $q = 'SELECT Datum, Tijd FROM Ticket WHERE Id = :id';
+            // Haal datum en tijd op van de voorstelling (juiste tabel!)
+            $q = 'SELECT Datum, Tijd FROM Voorstelling WHERE Id = :id';
             $this->db->query($q);
             $this->db->bind(':id', $ticket['voorstelling']);
             $this->db->execute();
             $result = $this->db->single();
+            if (!$result) {
+                error_log("[TicketModel:addTicket] Geen geldige voorstelling gevonden voor id: " . $ticket['voorstelling'] . "\n", 3, '/tmp/error.log');
+                return "Ongeldige voorstelling geselecteerd.";
+            }
             $date = $result->Datum;
             $time = $result->Tijd;
             // Voeg ticket toe
@@ -98,9 +108,15 @@ class ticketModel
             $this->db->bind(':bezoekerId', $ticket['bezoeker']);    
             $this->db->bind(':prijsId', $ticket['prijsId']);
             $this->db->bind(':tijd', $time);
-            return $this->db->execute();
+            $result = $this->db->execute();
+            if ($result === false) {
+                $errorInfo = $this->db->getErrorInfo();
+                error_log("[TicketModel:addTicket] Database error: " . print_r($errorInfo, true) . "\n", 3, '/tmp/error.log');
+                return "Er is een databasefout opgetreden bij het toevoegen van het ticket.";
+            }
+            return $result;
         } catch (Exception $e) {
-            error_log("[TicketModel:addTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            error_log("[TicketModel:addTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, '/tmp/error.log');
             return "Er is een fout opgetreden bij het toevoegen van het ticket. Probeer het later opnieuw.";
         }
     }
@@ -114,6 +130,10 @@ class ticketModel
             $this->db->query($sqlVoorstelling);
             $this->db->bind(':voorstellingId', $ticket['voorstelling']);
             $voorstelling = $this->db->single();
+            if (!$voorstelling) {
+                error_log("[TicketModel:updateTicket] Geen geldige voorstelling gevonden voor id: " . $ticket['voorstelling'] . "\n", 3, '/tmp/error.log');
+                return "Ongeldige voorstelling geselecteerd.";
+            }
             $date = $voorstelling->Datum;
             $time = $voorstelling->Tijd;
             // Update prijs
@@ -121,7 +141,12 @@ class ticketModel
             $this->db->query($sql);
             $this->db->bind(':prijs', $ticket['prijs']);
             $this->db->bind(':prijsId', $ticket['prijsId']);
-            $this->db->execute();
+            $prijsResult = $this->db->execute();
+            if ($prijsResult === false) {
+                $errorInfo = $this->db->getErrorInfo();
+                error_log("[TicketModel:updateTicket] Prijs update database error: " . print_r($errorInfo, true) . "\n", 3, '/tmp/error.log');
+                return "Er is een databasefout opgetreden bij het bijwerken van de prijs.";
+            }
             // Update ticket
             $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Tijd = :tijd, Status = :status, Datumgewijzigd = NOW(), BezoekerId = :bezoekerId, Barcode = :barcode WHERE Id = :id";
             $this->db->query($sql);
@@ -132,9 +157,15 @@ class ticketModel
             $this->db->bind(':barcode', $ticket['barcode']);
             $this->db->bind(':bezoekerId', $ticket['bezoeker']);
             $this->db->bind(':id', $ticket['id']);
-            return $this->db->execute();
+            $ticketResult = $this->db->execute();
+            if ($ticketResult === false) {
+                $errorInfo = $this->db->getErrorInfo();
+                error_log("[TicketModel:updateTicket] Ticket update database error: " . print_r($errorInfo, true) . "\n", 3, '/tmp/error.log');
+                return "Er is een databasefout opgetreden bij het bijwerken van het ticket.";
+            }
+            return $ticketResult;
         } catch (Exception $e) {
-            error_log("[TicketModel:updateTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            error_log("[TicketModel:updateTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, '/tmp/error.log');
             return "Er is een fout opgetreden bij het bijwerken van het ticket. Probeer het later opnieuw.";
         }
     }

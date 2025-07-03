@@ -31,11 +31,12 @@ function setupFormFeaturesJQ(formId, requiredFields, changeAlert, requireDirty) 
         return;
     }
     let initialData = {};
-    // Sla initiële data pas op NA volledige DOM load (en evt. plugins zoals Choices.js)
+
+    // Sla initiële data pas op NA volledige window load (en evt. plugins zoals Choices.js)
     $(window).on('load', function() {
         initialData = {};
-        $form.serializeArray().forEach(function(item) {
-            initialData[item.name] = item.value;
+        $form.find('input, select, textarea').each(function() {
+            initialData[this.name] = $(this).val();
         });
     });
 
@@ -50,14 +51,17 @@ function setupFormFeaturesJQ(formId, requiredFields, changeAlert, requireDirty) 
             }
         }
         // Vereis wijziging bij update
-        if (requireDirty && !isFormDirtyJQ($form, initialData)) {
-            e.preventDefault();
-            alert("Je hebt geen wijzigingen gemaakt aan het ticket.");
-        }
-        // Change-detectie bij submit (optioneel)
-        if (changeAlert && !isFormDirtyJQ($form, initialData)) {
-            e.preventDefault();
-            alert("Je hebt niks aangepast aan de voorstelling.");
+        if (requireDirty) {
+            let changed = false;
+            $form.find('input, select, textarea').each(function() {
+                if ($(this).val() !== initialData[this.name]) {
+                    changed = true;
+                }
+            });
+            if (!changed) {
+                e.preventDefault();
+                alert("Je hebt geen wijzigingen gemaakt aan het ticket.");
+            }
         }
     });
 }
@@ -75,7 +79,7 @@ $(function() {
     const $ticketForm = $('#ticket-form');
     if ($ticketForm.length) {
         // Detecteer of het een update is (hidden id aanwezig)
-        const isUpdate = $ticketForm.find('input[name=\"id\"]').length > 0 && $ticketForm.find('input[name=\"id\"]').val() !== '';
+        const isUpdate = $ticketForm.find('input[name="id"]').length > 0 && $ticketForm.find('input[name="id"]').val() !== '';
         setupFormFeaturesJQ(
             "ticket-form",
             [
@@ -88,5 +92,17 @@ $(function() {
             false, // geen losse change-alert
             isUpdate // alleen bij update vereisen dat er iets gewijzigd is
         );
+    }
+});
+
+// Initialiseer Choices.js voor bezoeker-selectie indien aanwezig
+$(function () {
+    var bezoekerSelect = $('#bezoeker');
+    if (bezoekerSelect.length && typeof Choices !== 'undefined') {
+        new Choices(bezoekerSelect[0], {
+            searchEnabled: true,
+            itemSelectText: '',
+            shouldSort: false
+        });
     }
 });

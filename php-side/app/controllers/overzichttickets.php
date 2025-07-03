@@ -71,8 +71,26 @@ class overzichttickets extends BaseController
                 'prijsId' => $prijsId
             ];
             // Voeg ticket toe via model
-            $this->model->addTicket($ticketData);
-            $this->redirect('overzichttickets/index', ['message' => 'Ticket toegevoegd!']);
+            $result = $this->model->addTicket($ticketData);
+            if ($result === true) {
+                if (session_status() === PHP_SESSION_NONE) session_start();
+                $_SESSION['flash_message'] = 'Ticket toegevoegd!';
+                $this->redirect('overzichttickets/index');
+            } else {
+                $formData = [
+                    'voorstelling' => $_POST['voorstelling'] ?? '',
+                    'barcode' => $_POST['barcode'] ?? '',
+                    'status' => $_POST['status'] ?? '',
+                    'bezoeker' => $_POST['bezoeker'] ?? '',
+                    'prijs' => $_POST['prijs'] ?? ''
+                ];
+                $this->view('overzichttickets/add', [
+                    'message' => is_string($result) ? $result : 'Onbekende fout bij opslaan.',
+                    'ticket' => (object)$formData,
+                    'voorstelling' => $voorstelling,
+                    'bezoekers' => $bezoekers
+                ]);
+            }
         } else {
             // Toon formulier
             $this->view('overzichttickets/add', ['voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
@@ -122,8 +140,28 @@ class overzichttickets extends BaseController
                 'prijsId' => $_POST['prijsId']
             ];
             // Update ticket via model
-            $this->model->updateTicket($ticketData);
-            $this->redirect('overzichttickets/index', ['message' => 'Ticket bijgewerkt!']);
+            $result = $this->model->updateTicket($ticketData);
+            if ($result === true) {
+                if (session_status() === PHP_SESSION_NONE) session_start();
+                $_SESSION['flash_message'] = 'Ticket bijgewerkt!';
+                $this->redirect('overzichttickets/index');
+            } else {
+                $formData = [
+                    'id' => $_POST['id'],
+                    'voorstelling' => $_POST['voorstelling'] ?? '',
+                    'barcode' => $_POST['barcode'] ?? '',
+                    'status' => $_POST['status'] ?? '',
+                    'bezoeker' => $_POST['bezoeker'] ?? '',
+                    'prijs' => $_POST['prijs'] ?? '',
+                    'prijsId' => $_POST['prijsId'] ?? ''
+                ];
+                $this->view('overzichttickets/edit', [
+                    'message' => is_string($result) ? $result : 'Onbekende fout bij bijwerken.',
+                    'ticket' => (object)$formData,
+                    'voorstelling' => $voorstelling,
+                    'bezoekers' => $bezoekers
+                ]);
+            }
         } else {
             // Haal ticketdata op voor bewerken
             $barcode = $_GET['barcode'] ?? null;
@@ -139,11 +177,21 @@ class overzichttickets extends BaseController
         $ticketId = $_GET['id'] ?? null;
         if ($ticketId) {
             // Verwijder ticket via model
-            $this->model->deleteTicket($ticketId);
-            $this->redirect('overzichttickets/index', ['message' => 'Ticket verwijderd!']);
+            $result = $this->model->deleteTicket($ticketId);
+            if ($result === true) {
+                if (session_status() === PHP_SESSION_NONE) session_start();
+                $_SESSION['flash_message'] = 'Ticket verwijderd!';
+                $this->redirect('overzichttickets/index');
+            } else {
+                if (session_status() === PHP_SESSION_NONE) session_start();
+                $_SESSION['flash_message'] = is_string($result) ? $result : 'Onbekende fout bij verwijderen.';
+                $this->redirect('overzichttickets/index');
+            }
         } else {
             // Geen ID opgegeven
-            $this->redirect('overzichttickets/index', ['message' => 'Geen ticket ID opgegeven.']);
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            $_SESSION['flash_message'] = 'Geen ticket ID opgegeven.';
+            $this->redirect('overzichttickets/index');
         }
     }
 }

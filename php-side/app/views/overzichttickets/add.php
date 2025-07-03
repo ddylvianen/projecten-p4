@@ -50,16 +50,6 @@
     </div>
     <!-- Choices.js JS -->
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script>
-      $(function () {
-        var bezoekerSelect = $('#bezoeker');
-        if (bezoekerSelect.length) {
-          new Choices(bezoekerSelect[0], {
-            searchEnabled: true,
-            itemSelectText: '',
-            shouldSort: false
-          });
-        }
-      });
-    </script>
+
+    <script src="../public/js/form.js"></script>
 <?php require_once APPROOT . '/views/includes/under.php'; ?>

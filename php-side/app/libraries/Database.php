@@ -110,4 +110,9 @@ class Database
     {
         return $this->dbHandler->lastInsertId();
     }
+
+    public function getErrorInfo()
+    {
+        return $this->statement ? $this->statement->errorInfo() : null;
+    }
 }
