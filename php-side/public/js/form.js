@@ -1,70 +1,83 @@
-try {
-    const form = document.getElementById("addles-form");
-    if (form) {
-        const initialData = new FormData(form);
-        let isDirty = false;
+// Zorg dat jQuery geladen is voordat dit script wordt uitgevoerd
 
-        function checkChanges() {
-            try {
-                const currentData = new FormData(form);
-                isDirty = false;
-
-                for (let [key, value] of currentData.entries()) {
-                    if (value !== initialData.get(key)) {
-                        isDirty = true;
-                        break;
-                    }
-                }
-            } catch (error) {
-                console.error("Fout bij het controleren van wijzigingen:", error);
-            }
+// Algemene helper om een formulier te valideren op verplichte velden
+function validateRequiredFieldsJQ($form, requiredFields) {
+    let errors = [];
+    requiredFields.forEach(field => {
+        const $el = $form.find('#' + field.id);
+        if ($el.length === 0 || !$el.val().trim()) {
+            errors.push(field.name + ' is verplicht.');
         }
-
-        form.addEventListener("input", checkChanges);
-
-        form.addEventListener("submit", function (e) {
-            try {
-                checkChanges(); // check nog een keer bij submit
-                if (!isDirty) {
-                    e.preventDefault();
-                    alert("Je hebt niks aangepast aan de voorstelling.");
-                }
-            } catch (error) {
-                console.error("Fout bij het formulier verzenden:", error);
-                // Allow form submission even in error case
-            }
-        });
-    } else {
-        console.warn("Formulier 'addles-form' niet gevonden in document.");
-    }
-} catch (e) {
-    console.error("Algemene fout in formulierscript:", e);
+    });
+    return errors;
 }
 
-try {
-    const form = document.getElementById("ticket-form");
-    if (form) {
-        form.addEventListener("submit", function (e) {
-            let errors = [];
-            const requiredFields = [
-                { id: 'voorstelling', name: 'Voorstelling' },
-                { id: 'barcode', name: 'Barcode' },
-                { id: 'status', name: 'Status' },
-                { id: 'bezoeker', name: 'Bezoeker' },
-                { id: 'prijs', name: 'Prijs' }
-            ];
-            requiredFields.forEach(field => {
-                const el = document.getElementById(field.id);
-                if (!el || !el.value.trim()) {
-                    errors.push(field.name + ' is verplicht.');
-                }
-            });
+// Detecteer of een formulier gewijzigd is
+function isFormDirtyJQ($form, initialData) {
+    let dirty = false;
+    $form.serializeArray().forEach(function(item) {
+        if (item.value !== (initialData[item.name] || '')) {
+            dirty = true;
+        }
+    });
+    return dirty;
+}
+
+// Initialiseer validatie en change-detectie voor een formulier
+function setupFormFeaturesJQ(formId, requiredFields, changeAlert) {
+    const $form = $('#' + formId);
+    if ($form.length === 0) {
+        console.warn(`Formulier '${formId}' niet gevonden in document.`);
+        return;
+    }
+    // Sla initiële data op
+    let initialData = {};
+    $form.serializeArray().forEach(function(item) {
+        initialData[item.name] = item.value;
+    });
+    let isDirty = false;
+
+    // Change-detectie (optioneel)
+    if (changeAlert) {
+        $form.on('input change', function () {
+            isDirty = isFormDirtyJQ($form, initialData);
+        });
+    }
+
+    $form.on('submit', function (e) {
+        // Validatie
+        if (requiredFields && requiredFields.length > 0) {
+            const errors = validateRequiredFieldsJQ($form, requiredFields);
             if (errors.length > 0) {
                 e.preventDefault();
                 alert(errors.join('\n'));
+                return;
             }
-        });
-    }
-} catch (e) {
-    console.error("Fout bij ticketformulier validatie:", e);
+        }
+        // Change-detectie bij submit (optioneel)
+        if (changeAlert && !isFormDirtyJQ($form, initialData)) {
+            e.preventDefault();
+            alert("Je hebt niks aangepast aan de voorstelling.");
+        }
+    });
 }
+
+// Setup voor addles-form (les toevoegen/bewerken)
+setupFormFeaturesJQ(
+    "addles-form",
+    [], // geen verplichte velden hier (pas aan indien nodig)
+    true // change-detectie aan
+);
+
+// Setup voor ticket-form (ticket toevoegen/bewerken)
+setupFormFeaturesJQ(
+    "ticket-form",
+    [
+        { id: 'voorstelling', name: 'Voorstelling' },
+        { id: 'barcode', name: 'Barcode' },
+        { id: 'status', name: 'Status' },
+        { id: 'bezoeker', name: 'Bezoeker' },
+        { id: 'prijs', name: 'Prijs' }
+    ],
+    false // geen change-detectie nodig
+);
