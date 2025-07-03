@@ -1,6 +1,5 @@
 <?php
-
-
+// Controller voor admin functionaliteit
 class Admin extends BaseController
 {
     private $adminModel;
@@ -8,6 +7,7 @@ class Admin extends BaseController
     {
         $this->adminModel = $this->model('AdminModel');
     }
+    // Toon admin dashboard
     public function index($data = [], $params = [])
     {
         $this->checkadmin();

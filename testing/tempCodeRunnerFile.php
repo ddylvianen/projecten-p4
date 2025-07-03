@@ -9,5 +9,3 @@ try {
 } catch (PDOException $e) {
     echo "❌ Fout: " . $e->getMessage();
 }
-
-

@@ -1,15 +1,11 @@
 <?php
-
+// Controller voor de homepagina
 class Homepages extends BaseController
 {
-
+    // Toon de homepagina
     public function index($data = [], $params = [])
     {
-        // echo ($this->loggedinAS('gastgebruiker')) ?  'geen gast!!' : 'gastgastt!!';
-        ($this->loggedinAS('admin')) ? $this->redirect('admin/index') : 
         $this->view('homepages/index', $data);
-
     }
-
     
 }

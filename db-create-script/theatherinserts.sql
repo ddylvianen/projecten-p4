@@ -44,3 +44,48 @@ INSERT INTO Ticket (BezoekerId, VoorstellingId, PrijsId, Nummer, Barcode, Datum,
 INSERT INTO Melding (BezoekerId, MedewerkerId, Nummer, Type, Bericht, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd) VALUES
 (1, NULL, 4001, 'Vraag', 'Tot hoe laat duurt de voorstelling Hamlet?', 1, NULL, NOW(), NOW()),
 (NULL, 2, 4002, 'Technisch', 'Geluid valt uit tijdens scène 3.', 1, NULL, NOW(), NOW());
+
+
+DELIMITER $$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `InsertGebruiker`(
+    IN p_voornaam VARCHAR(50), 
+    IN p_tussenvoegsel VARCHAR(10), 
+    IN p_achternaam VARCHAR(50), 
+    IN p_gebruikersnaam VARCHAR(100), 
+    IN p_wachtwoord VARCHAR(255)
+)
+BEGIN
+    INSERT INTO Gebruiker (
+        Voornaam, Tussenvoegsel, Achternaam, Gebruikersnaam, Wachtwoord, 
+        IsIngelogd, Ingelogd, Uitgelogd, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd
+    ) VALUES (
+        p_voornaam, p_tussenvoegsel, p_achternaam, p_gebruikersnaam, p_wachtwoord,
+        0, NULL, NULL, 1, NULL, NOW(), NOW()
+    );
+    SELECT LAST_INSERT_ID() AS GebruikerID;
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `InsertRol`(
+    IN p_gebruikerid INT, 
+    IN p_rol VARCHAR(100)
+)
+BEGIN
+    INSERT INTO Rol (GebruikerId, Naam, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd) 
+    VALUES (p_gebruikerid, p_rol, 1, NULL, NOW(), NOW());
+    SELECT LAST_INSERT_ID() AS RolID;
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `SLuser`(IN username VARCHAR(100))
+BEGIN
+    SELECT 
+        Gb.Id, 
+        Gb.Gebruikersnaam, 
+        Gb.Wachtwoord, 
+        Rol.Naam AS rol 
+    FROM Gebruiker AS Gb
+    LEFT JOIN Rol ON Gb.Id = Rol.GebruikerId
+    WHERE Gb.Gebruikersnaam = username;
+END$$
+
+DELIMITER ;

@@ -11,8 +11,8 @@
     
     <div class="nav-links open">
       <a href="/">home</a>
-      <a href="/lessen">voorstellingen</a>
-      <a href="/reservering">reserveringen</a>
+      <a href="/overzichttickets">ticketsoverzicht</a>
+      <a href="/medewerker">medewerkeroverzicht</a>
       <?php
         if (isset($_SESSION['role'])){
 
