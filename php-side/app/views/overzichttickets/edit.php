@@ -14,7 +14,7 @@
         }
         $csrf_token = $_SESSION['csrf_token'];
         ?>
-        <form method="post" action="/overzichttickets/update" class="mx-auto my-5 p-4 bg-white rounded shadow fs-5" style="width: 60%; min-width: 320px;">
+        <form id="ticket-form" method="post" action="/overzichttickets/update" class="mx-auto my-5 p-4 bg-white rounded shadow fs-5" style="width: 60%; min-width: 320px;">
             <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
             <input type="hidden" name="id" value="<?= htmlspecialchars($data['ticket']->Id ?? '') ?>">
             <div class="mb-3">

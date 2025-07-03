@@ -40,3 +40,31 @@ try {
 } catch (e) {
     console.error("Algemene fout in formulierscript:", e);
 }
+
+try {
+    const form = document.getElementById("ticket-form");
+    if (form) {
+        form.addEventListener("submit", function (e) {
+            let errors = [];
+            const requiredFields = [
+                { id: 'voorstelling', name: 'Voorstelling' },
+                { id: 'barcode', name: 'Barcode' },
+                { id: 'status', name: 'Status' },
+                { id: 'bezoeker', name: 'Bezoeker' },
+                { id: 'prijs', name: 'Prijs' }
+            ];
+            requiredFields.forEach(field => {
+                const el = document.getElementById(field.id);
+                if (!el || !el.value.trim()) {
+                    errors.push(field.name + ' is verplicht.');
+                }
+            });
+            if (errors.length > 0) {
+                e.preventDefault();
+                alert(errors.join('\n'));
+            }
+        });
+    }
+} catch (e) {
+    console.error("Fout bij ticketformulier validatie:", e);
+}
