@@ -1,5 +1,5 @@
 <?php
-
+// Controller voor login functionaliteit
 class login extends BaseController
 {
     private $userModel;
@@ -9,9 +9,9 @@ class login extends BaseController
         $this->userModel = $this->model('UserModel');
     }
     
+    // Toon het loginformulier of verwerk login
     public function index($data = [], $params = [])
     {
-
         if($_SERVER['REQUEST_METHOD'] == 'POST'){
             (session_status() == PHP_SESSION_NONE)?
             session_start() : session_reset();
@@ -22,6 +22,7 @@ class login extends BaseController
         }
     }
 
+    // Verwerk login
     private function login(){
         $username = filter_input(INPUT_POST, 'username', FILTER_SANITIZE_SPECIAL_CHARS);
         $password = filter_input(INPUT_POST, 'password', FILTER_UNSAFE_RAW);
@@ -41,6 +42,4 @@ class login extends BaseController
         $_SESSION['role'] = $user->role;
         $this->redirect('homepages/index', ['message' => 'Welkom ' . $_SESSION['username']]);
     }
-
-
 }

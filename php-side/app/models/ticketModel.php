@@ -1,16 +1,18 @@
 <?php
 
+// Model voor alle database-acties rondom tickets
 class ticketModel
 {
+    // Database connectie
     private $db;
 
+    // Constructor: maak database connectie
     public function __construct()
     {
         $this->db = new Database();
     }
 
     // Haal alle tickets op (optioneel filter op status)
-    // Haal alle tickets op, optioneel filteren op status (standaard: 'bezet')
     public function getTickets($status = 'bezet')
     {
         // SQL-query om tickets op te halen met bijbehorende voorstelling, bezoeker en prijsinformatie
@@ -26,34 +28,31 @@ class ticketModel
     // Scan ticket (status veranderen)
     public function scanTicket($barcode, $nieuweStatus = 'bezet')
     {
-        // Check current status
         try {
+            // Controleer huidige status
             $sql = "SELECT Status FROM Ticket WHERE Barcode = :barcode";
             $this->db->query($sql);
             $this->db->bind(':barcode', $barcode);
             $ticket = $this->db->single();
             if (!$ticket) {
-            return "Ticket niet gevonden.";
+                return "Ticket niet gevonden.";
             }
-
             if (strcmp($ticket->Status, 'bezet') === 0) {
-            return "Ticket all aangemeld als aanwezig.";
+                return "Ticket all aangemeld als aanwezig.";
             }
-
             // Update status
             $sql = "UPDATE Ticket SET Status = :status, Datumgewijzigd = NOW() WHERE Barcode = :barcode";
             $this->db->query($sql);
             $this->db->bind(':status', $nieuweStatus);
             $this->db->bind(':barcode', $barcode);
             $this->db->execute();
-
             return "ticket is aangemeld!";
         } catch (Exception $e) {
             return "Er is een fout opgetreden";
         }
     }
 
-    // Verwijder ticket
+    // Verwijder ticket uit de database
     public function deleteTicket($ticketId)
     {
         try {
@@ -67,6 +66,7 @@ class ticketModel
         }
     }
 
+    // Voeg een nieuwe prijs toe en retourneer het ID
     public function addPrijs($prijs)
     {
         $sql = "INSERT INTO Prijs (Tarief) VALUES (:tarief)";
@@ -76,9 +76,11 @@ class ticketModel
         return $this->db->lastInsertId();
     }
 
+    // Voeg een nieuw ticket toe aan de database
     public function addTicket($ticket)
     {
         try {
+            // Haal datum en tijd op van de voorstelling
             $q = 'SELECT Datum, Tijd FROM Ticket WHERE Id = :id';
             $this->db->query($q);
             $this->db->bind(':id', $ticket['voorstelling']);
@@ -86,7 +88,7 @@ class ticketModel
             $result = $this->db->single();
             $date = $result->Datum;
             $time = $result->Tijd;
-
+            // Voeg ticket toe
             $sql = "INSERT INTO Ticket (VoorstellingId, Datum, Barcode, Status, Datumgewijzigd, BezoekerId, PrijsId, Tijd) VALUES (:voorstellingId, :datum, :barcode, :status, NOW(), :bezoekerId, :prijsId, :tijd)";
             $this->db->query($sql); 
             $this->db->bind(':voorstellingId', $ticket['voorstelling']);
@@ -103,24 +105,24 @@ class ticketModel
         }
     }
 
+    // Update een bestaand ticket
     public function updateTicket($ticket)
     {
         try {
-            // 1. Haal de nieuwe datum en tijd op van de voorstelling
+            // Haal nieuwe datum en tijd op van de voorstelling
             $sqlVoorstelling = "SELECT Datum, Tijd FROM Voorstelling WHERE Id = :voorstellingId";
             $this->db->query($sqlVoorstelling);
             $this->db->bind(':voorstellingId', $ticket['voorstelling']);
             $voorstelling = $this->db->single();
             $date = $voorstelling->Datum;
             $time = $voorstelling->Tijd;
-
+            // Update prijs
             $sql = "UPDATE Prijs SET Tarief = :prijs WHERE Id = :prijsId";
             $this->db->query($sql);
             $this->db->bind(':prijs', $ticket['prijs']);
             $this->db->bind(':prijsId', $ticket['prijsId']);
             $this->db->execute();
-
-            // 3. Update het ticket met alle relevante velden
+            // Update ticket
             $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Tijd = :tijd, Status = :status, Datumgewijzigd = NOW(), BezoekerId = :bezoekerId, Barcode = :barcode WHERE Id = :id";
             $this->db->query($sql);
             $this->db->bind(':voorstellingId', $ticket['voorstelling']);
@@ -137,6 +139,7 @@ class ticketModel
         }
     }
 
+    // Haal een specifiek ticket op
     public function getTicket($ticket)
     {
         $sql = "SELECT t.*, v.Naam AS VoorstellingNaam, b.Relatienummer, p.Tarief
@@ -151,6 +154,7 @@ class ticketModel
         return $this->db->single();
     }
 
+    // Haal alle actieve voorstellingen op
     public function getVoorstellingen()
     {
         $sql = "SELECT Id, Naam FROM Voorstelling WHERE IsActief = 1";
@@ -158,6 +162,7 @@ class ticketModel
         return $this->db->resultSet();
     }
 
+    // Haal alle bezoekers op
     public function getBezoekers()
     {
         $sql = "SELECT Bezoeker.Id, CONCAT(Gebruiker.Voornaam, ' ', Gebruiker.Achternaam) AS Naam
@@ -167,6 +172,7 @@ class ticketModel
         return $this->db->resultSet();
     }
 
+    // Haal medewerkerId op bij een voorstelling
     public function getMedewerkerIdByVoorstellingId($voorstellingId)
     {
         $sql = "SELECT MedewerkerId FROM Voorstelling WHERE Id = :id";

@@ -1,8 +1,10 @@
 <?php
+// Controller voor medewerker functionaliteit
 require_once __DIR__ . '/../libraries/BaseController.php';
 
-class medewerker extends BaseController
+class Medewerker extends BaseController
 {
+    // Toon medewerker overzicht
     public function index($data = [], $params = [])
     {
         // Let op hier de volledige modelnaam met Model erbij
