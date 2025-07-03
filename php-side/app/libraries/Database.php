@@ -96,6 +96,7 @@ class Database
 
     public function single()
     {
+        $this->statement->execute();
         $result = $this->statement->fetch(PDO::FETCH_OBJ);
         $this->statement->closeCursor();
         return $result;
@@ -108,5 +109,10 @@ class Database
     public function lastInsertId()
     {
         return $this->dbHandler->lastInsertId();
+    }
+
+    public function getErrorInfo()
+    {
+        return $this->statement ? $this->statement->errorInfo() : null;
     }
 }

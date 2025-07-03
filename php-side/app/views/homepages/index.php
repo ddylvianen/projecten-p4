@@ -1,5 +1,4 @@
 <?php require_once APPROOT . '/views/includes/header.php'; ?>
-
 <link rel="stylesheet" href="../public/css/home.css">
 </head>
 <body>

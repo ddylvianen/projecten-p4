@@ -37,29 +37,14 @@ class BaseController
 
     public function redirect($page, $data = [])
     {
-        $_SERVER['REQUEST_METHOD'] = 'GET';
-        
-        $controller = explode('/', $page)[0];
-        $controller = ($controller == 'homepages') ? 'homepages' : $controller;
-        // header("Location: " . '/' . $controller)
-        $method = explode('/', $page)[1];
-
-        $params = explode('/', $page)[2] ?? null;
-        $redirect = ($controller == 'homepages') ? '' : $controller;
-        $data['redirect'] = "history.pushState({}, '', '$redirect');";
-        require_once '../app/controllers/' . $controller . '.php';
-        $controller = new $controller();
-
-        if (method_exists($controller, $method)) {
-            if ($params) {
-                $controller->{$method}($data, $params);
-            } else {
-                $controller->{$method}($data);
-            }
-
-        } else {
-            echo 'Method bestaat niet';
+        // Zet een echte HTTP redirect met header
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (isset($data['message'])) {
+            $_SESSION['flash_message'] = $data['message'];
         }
+        $location = URLROOT . '/' . ltrim($page, '/');
+        header('Location: ' . $location);
+        exit();
     }
 
     public function sendmail($to, $subject, $message)

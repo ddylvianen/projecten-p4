@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS TheaterDB;
 CREATE DATABASE IF NOT EXISTS TheaterDB;
 USE TheaterDB;
@@ -14,10 +13,10 @@ CREATE TABLE Gebruiker (
     IsIngelogd BIT NOT NULL,
     Ingelogd DATETIME(6),
     Uitgelogd DATETIME(6),
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id)
 ) ENGINE=InnoDB;
 
@@ -26,10 +25,10 @@ CREATE TABLE Rol (
     Id INT NOT NULL AUTO_INCREMENT,
     GebruikerId INT NOT NULL,
     Naam VARCHAR(100) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (GebruikerId) REFERENCES Gebruiker(Id)
 ) ENGINE=InnoDB;
@@ -40,10 +39,10 @@ CREATE TABLE Contact (
     GebruikerId INT NOT NULL,
     Email VARCHAR(100) NOT NULL,
     Mobiel VARCHAR(20) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (GebruikerId) REFERENCES Gebruiker(Id)
 ) ENGINE=InnoDB;
@@ -54,10 +53,10 @@ CREATE TABLE Medewerker (
     GebruikerId INT NOT NULL,
     Nummer MEDIUMINT NOT NULL UNIQUE,
     Medewerkersoort VARCHAR(20) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (GebruikerId) REFERENCES Gebruiker(Id)
 ) ENGINE=InnoDB;
@@ -67,10 +66,10 @@ CREATE TABLE Bezoeker (
     Id INT NOT NULL AUTO_INCREMENT,
     GebruikerId INT NOT NULL,
     Relatienummer MEDIUMINT NOT NULL UNIQUE,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (GebruikerId) REFERENCES Gebruiker(Id)
 ) ENGINE=InnoDB;
@@ -79,10 +78,10 @@ CREATE TABLE Bezoeker (
 CREATE TABLE Prijs (
     Id INT NOT NULL AUTO_INCREMENT,
     Tarief DECIMAL(5,2) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id)
 ) ENGINE=InnoDB;
 
@@ -96,10 +95,10 @@ CREATE TABLE Voorstelling (
     Tijd TIME NOT NULL,
     MaxAantalTickets INT NOT NULL,
     Beschikbaarheid VARCHAR(50) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (MedewerkerId) REFERENCES Medewerker(Id)
 ) ENGINE=InnoDB;
@@ -115,10 +114,10 @@ CREATE TABLE Ticket (
     Datum DATE NOT NULL,
     Tijd TIME NOT NULL,
     Status VARCHAR(20) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (BezoekerId) REFERENCES Bezoeker(Id),
     FOREIGN KEY (VoorstellingId) REFERENCES Voorstelling(Id),
@@ -133,10 +132,10 @@ CREATE TABLE Melding (
     Nummer MEDIUMINT NOT NULL UNIQUE,
     Type VARCHAR(20) NOT NULL,
     Bericht VARCHAR(250) NOT NULL,
-    Isactief BIT NOT NULL,
+    Isactief BIT NOT NULL DEFAULT 1,
     Opmerking VARCHAR(250),
-    Datumaangemaakt DATETIME(6) NOT NULL,
-    Datumgewijzigd DATETIME(6) NOT NULL,
+    Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     PRIMARY KEY (Id),
     FOREIGN KEY (BezoekerId) REFERENCES Bezoeker(Id),
     FOREIGN KEY (MedewerkerId) REFERENCES Medewerker(Id)
@@ -189,4 +188,54 @@ INSERT INTO Ticket (BezoekerId, VoorstellingId, PrijsId, Nummer, Barcode, Datum,
 INSERT INTO Melding (BezoekerId, MedewerkerId, Nummer, Type, Bericht, Isactief, Opmerking, Datumaangemaakt, Datumgewijzigd) VALUES
 (1, NULL, 4001, 'Vraag', 'Tot hoe laat duurt de voorstelling Hamlet?', 1, NULL, NOW(), NOW()),
 (NULL, 2, 4002, 'Technisch', 'Geluid valt uit tijdens scène 3.', 1, NULL, NOW(), NOW());
+
+-- UPDATE SCRIPT voor bestaande tabellen
+-- Voeg default waarde toe aan Isactief, Datumaangemaakt en Datumgewijzigd
+
+ALTER TABLE Gebruiker 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Rol 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Contact 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Medewerker 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Bezoeker 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Prijs 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Voorstelling 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Ticket 
+    MODIFY COLUMN Nummer MEDIUMINT NOT NULL UNIQUE DEFAULT AUTO_INCREMENT,
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+
+ALTER TABLE Melding 
+    MODIFY COLUMN Isactief BIT NOT NULL DEFAULT 1,
+    MODIFY COLUMN Datumaangemaakt DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    MODIFY COLUMN Datumgewijzigd DATETIME(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6);
+-- EINDE UPDATE SCRIPT
 
