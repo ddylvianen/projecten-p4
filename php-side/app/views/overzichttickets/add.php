@@ -5,7 +5,15 @@
     <div class="container mt-4">
         <?php require_once APPROOT . '/views/includes/navbar.php'; ?>
         <h2>Ticket toevoegen</h2>
+        <?php
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        if (empty($_SESSION['csrf_token'])) {
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+        }
+        $csrf_token = $_SESSION['csrf_token'];
+        ?>
         <form method="post" action="/overzichttickets/add" class="mx-auto my-5 p-4 bg-white rounded shadow fs-5" style="width: 60%; min-width: 320px;">
+            <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrf_token) ?>">
             <div class="mb-3">
                 <label for="voorstelling" class="form-label">Voorstelling</label>
                 <select name="voorstelling" id="voorstelling" class="form-select" required>

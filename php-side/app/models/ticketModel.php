@@ -56,10 +56,15 @@ class ticketModel
     // Verwijder ticket
     public function deleteTicket($ticketId)
     {
-        $sql = "DELETE FROM Ticket WHERE Id = :id";
-        $this->db->query($sql);
-        $this->db->bind(':id', $ticketId, PDO::PARAM_INT);
-        return $this->db->execute();
+        try {
+            $sql = "DELETE FROM Ticket WHERE Id = :id";
+            $this->db->query($sql);
+            $this->db->bind(':id', $ticketId, PDO::PARAM_INT);
+            return $this->db->execute();
+        } catch (Exception $e) {
+            error_log("[TicketModel:deleteTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            return "Er is een fout opgetreden bij het verwijderen van het ticket. Probeer het later opnieuw.";
+        }
     }
 
     public function addPrijs($prijs)
@@ -73,55 +78,63 @@ class ticketModel
 
     public function addTicket($ticket)
     {
-        $q = 'SELECT Datum, Tijd FROM Ticket WHERE Id = :id';
-        $this->db->query($q);
-        $this->db->bind(':id', $ticket['voorstelling']);
-        $this->db->execute();
-        $result = $this->db->single();
-        $date = $result->Datum;
-        $time = $result->Tijd;
+        try {
+            $q = 'SELECT Datum, Tijd FROM Ticket WHERE Id = :id';
+            $this->db->query($q);
+            $this->db->bind(':id', $ticket['voorstelling']);
+            $this->db->execute();
+            $result = $this->db->single();
+            $date = $result->Datum;
+            $time = $result->Tijd;
 
-
-        $sql = "INSERT INTO Ticket (VoorstellingId, Datum, Barcode, Status, Datumgewijzigd, BezoekerId, PrijsId, Tijd) VALUES (:voorstellingId, :datum, :barcode, :status, NOW(), :bezoekerId, :prijsId, :tijd)";
-        $this->db->query($sql); 
-        $this->db->bind(':voorstellingId', $ticket['voorstelling']);
-        $this->db->bind(':datum', $date);
-        $this->db->bind(':barcode', $ticket['barcode']);    
-        $this->db->bind(':status', $ticket['status']);
-        $this->db->bind(':bezoekerId', $ticket['bezoeker']);    
-        $this->db->bind(':prijsId', $ticket['prijsId']);
-        $this->db->bind(':tijd', $time);
-        return $this->db->execute();
+            $sql = "INSERT INTO Ticket (VoorstellingId, Datum, Barcode, Status, Datumgewijzigd, BezoekerId, PrijsId, Tijd) VALUES (:voorstellingId, :datum, :barcode, :status, NOW(), :bezoekerId, :prijsId, :tijd)";
+            $this->db->query($sql); 
+            $this->db->bind(':voorstellingId', $ticket['voorstelling']);
+            $this->db->bind(':datum', $date);
+            $this->db->bind(':barcode', $ticket['barcode']);    
+            $this->db->bind(':status', $ticket['status']);
+            $this->db->bind(':bezoekerId', $ticket['bezoeker']);    
+            $this->db->bind(':prijsId', $ticket['prijsId']);
+            $this->db->bind(':tijd', $time);
+            return $this->db->execute();
+        } catch (Exception $e) {
+            error_log("[TicketModel:addTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            return "Er is een fout opgetreden bij het toevoegen van het ticket. Probeer het later opnieuw.";
+        }
     }
 
     public function updateTicket($ticket)
     {
-        // 1. Haal de nieuwe datum en tijd op van de voorstelling
-        $sqlVoorstelling = "SELECT Datum, Tijd FROM Voorstelling WHERE Id = :voorstellingId";
-        $this->db->query($sqlVoorstelling);
-        $this->db->bind(':voorstellingId', $ticket['voorstelling']);
-        $voorstelling = $this->db->single();
-        $date = $voorstelling->Datum;
-        $time = $voorstelling->Tijd;
+        try {
+            // 1. Haal de nieuwe datum en tijd op van de voorstelling
+            $sqlVoorstelling = "SELECT Datum, Tijd FROM Voorstelling WHERE Id = :voorstellingId";
+            $this->db->query($sqlVoorstelling);
+            $this->db->bind(':voorstellingId', $ticket['voorstelling']);
+            $voorstelling = $this->db->single();
+            $date = $voorstelling->Datum;
+            $time = $voorstelling->Tijd;
 
-        $sql = "UPDATE Prijs SET Tarief = :prijs WHERE Id = :prijsId";
-        $this->db->query($sql);
-        $this->db->bind(':prijs', $ticket['prijs']);
-        $this->db->bind(':prijsId', $ticket['prijsId']);
-        $this->db->execute();
+            $sql = "UPDATE Prijs SET Tarief = :prijs WHERE Id = :prijsId";
+            $this->db->query($sql);
+            $this->db->bind(':prijs', $ticket['prijs']);
+            $this->db->bind(':prijsId', $ticket['prijsId']);
+            $this->db->execute();
 
-        // 3. Update het ticket met alle relevante velden
-        $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Tijd = :tijd, Status = :status, Datumgewijzigd = NOW(), BezoekerId = :bezoekerId, Barcode = :barcode WHERE Id = :id";
-        $this->db->query($sql);
-        $this->db->bind(':voorstellingId', $ticket['voorstelling']);
-        $this->db->bind(':datum', $date);
-        $this->db->bind(':tijd', $time);
-        $this->db->bind(':status', $ticket['status']);
-        $this->db->bind(':barcode', $ticket['barcode']);
-        $this->db->bind(':bezoekerId', $ticket['bezoeker']);
-
-        $this->db->bind(':id', $ticket['id']);
-        return $this->db->execute();
+            // 3. Update het ticket met alle relevante velden
+            $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Tijd = :tijd, Status = :status, Datumgewijzigd = NOW(), BezoekerId = :bezoekerId, Barcode = :barcode WHERE Id = :id";
+            $this->db->query($sql);
+            $this->db->bind(':voorstellingId', $ticket['voorstelling']);
+            $this->db->bind(':datum', $date);
+            $this->db->bind(':tijd', $time);
+            $this->db->bind(':status', $ticket['status']);
+            $this->db->bind(':barcode', $ticket['barcode']);
+            $this->db->bind(':bezoekerId', $ticket['bezoeker']);
+            $this->db->bind(':id', $ticket['id']);
+            return $this->db->execute();
+        } catch (Exception $e) {
+            error_log("[TicketModel:updateTicket] " . $e->getMessage() . "\n" . $e->getTraceAsString(), 3, __DIR__ . '/../../../../logs/apache/error.log');
+            return "Er is een fout opgetreden bij het bijwerken van het ticket. Probeer het later opnieuw.";
+        }
     }
 
     public function getTicket($ticket)

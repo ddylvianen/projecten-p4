@@ -30,6 +30,11 @@ class overzichttickets extends BaseController
         $voorstelling = $this->model->getVoorstellingen();
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+                $this->view('overzichttickets/add', ['message' => 'Ongeldige sessie. Probeer het opnieuw.', 'voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
+                return;
+            }
             $requiredFields = ['voorstelling', 'barcode', 'status', 'bezoeker', 'prijs'];
             $missing = [];
             foreach ($requiredFields as $field) {
@@ -70,6 +75,11 @@ class overzichttickets extends BaseController
         $voorstelling = $this->model->getVoorstellingen();
         
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (session_status() === PHP_SESSION_NONE) session_start();
+            if (empty($_POST['csrf_token']) || $_POST['csrf_token'] !== ($_SESSION['csrf_token'] ?? '')) {
+                $this->view('overzichttickets/edit', ['message' => 'Ongeldige sessie. Probeer het opnieuw.', 'voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
+                return;
+            }
             $requiredFields = ['voorstelling', 'barcode', 'status', 'bezoeker', 'prijs'];
             $missing = [];
             foreach ($requiredFields as $field) {
