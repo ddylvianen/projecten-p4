@@ -47,7 +47,10 @@ class BaseController
         $params = explode('/', $page)[2] ?? null;
         $redirect = ($controller == 'homepages') ? '' : $controller;
         $data['redirect'] = "history.pushState({}, '', '$redirect');";
-        require_once '../app/controllers/' . $controller . '.php';
+        if(!class_exists($controller)){
+            require_once '../app/controllers/' . $controller . '.php';
+        }
+        
         $controller = new $controller();
 
         if (method_exists($controller, $method)) {

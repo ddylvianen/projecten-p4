@@ -8,6 +8,7 @@
         <?php require_once APPROOT . '/views/includes/navbar.php'; ?>
         <h2>Ticket bewerken</h2>
         <form method="post" action="/overzichttickets/update" class="mx-auto my-5 p-4 bg-white rounded shadow fs-5" style="width: 60%; min-width: 320px;">
+            <input type="hidden" name="id" value="<?= htmlspecialchars($data['ticket']->Id ?? '') ?>">
             <div class="mb-3">
                 <label for="voorstelling" class="form-label fw-semibold">Voorstelling</label>
                 <select name="voorstelling" id="voorstelling" class="form-select" required>
@@ -21,19 +22,20 @@
                 <label for="bezoeker" class="form-label fw-semibold">Bezoeker</label>
                 <select name="bezoeker" id="bezoeker" class="form-select" required>
                     <option value="" disabled selected>Kies een bezoeker</option>
-                    <?php foreach ($data['bezoeker'] as $bezoeker) : ?>
+                    <?php foreach ($data['bezoekers'] as $bezoeker) : ?>
                         <option value="<?= $bezoeker->Id ?>" <?= $bezoeker->Id == ($data['ticket']->BezoekerId ?? '') ? 'selected' : '' ?>><?= $bezoeker->Naam ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="mb-3">
-                <label for="datum" class="form-label fw-semibold">Datum</label>
-                <input type="date" class="form-control form-control-lg" id="datum" name="datum" value="<?= htmlspecialchars($data['ticket']->Datum ?? $data['ticket']->Datum ?? ''); ?>" required>
-            </div>
-            <div class="mb-3">
                 <label for="barcode" class="form-label fw-semibold">Barcode</label>
                 <input type="text" class="form-control form-control-lg" id="barcode" name="barcode" value="<?= htmlspecialchars($data['ticket']->Barcode ?? $data['ticket']->Barcode ?? ''); ?>" required>
             </div>
+            <div class="mb-3">
+                <label for="prijs" class="form-label fw-semibold">Prijs</label>
+                <input type="number" class="form-control form-control-lg" id="prijs" name="prijs" value="<?= htmlspecialchars($data['ticket']->Tarief ?? $data['ticket']->Tarief ?? '0'); ?>" min="0" step="0.01" max="1000" required>
+            </div>
+            <input type="hidden" name="prijsId" id="prijsId" value="<?= htmlspecialchars($data['ticket']->PrijsId ?? $data['ticket']->PrijsId ?? ''); ?>">
             <div class="mb-3">
                 <label for="status" class="form-label fw-semibold">Status</label>
                 <input type="text" class="form-control form-control-lg" id="status" name="status" value="<?= htmlspecialchars($data['ticket']->Status ?? $data['ticket']->Status ?? ''); ?>" required>

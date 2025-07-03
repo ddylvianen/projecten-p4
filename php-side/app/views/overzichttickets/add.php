@@ -19,18 +19,18 @@
                 <label for="bezoeker" class="form-label">Bezoeker</label>
                 <select name="bezoeker" id="bezoeker" class="form-select" required>
                     <option value="" disabled selected>Kies een bezoeker</option>
-                    <?php foreach ($data['bezoeker'] as $bezoeker) : ?>
+                    <?php foreach ($data['bezoekers'] as $bezoeker) : ?>
                         <option value="<?= $bezoeker->Id ?>" <?= isset($data['ticket']->bezoeker) && $bezoeker->Id == $data['ticket']->bezoeker ? 'selected' : '' ?>><?= $bezoeker->Naam ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <div class="mb-3">
-                <label for="datum" class="form-label">Datum</label>
-                <input type="date" class="form-control" id="datum" name="datum" required>
-            </div>
-            <div class="mb-3">
                 <label for="barcode" class="form-label">Barcode</label>
                 <input type="text" class="form-control" id="barcode" name="barcode" required>
+            </div>
+            <div class="mb-3">
+                <label for="prijs" class="form-label">Prijs</label>
+                <input type="number" class="form-control" id="prijs" name="prijs" min="0" step="0.01" max="1000" value="0" required>
             </div>
             <div class="mb-3">
                 <label for="status" class="form-label">Status</label>

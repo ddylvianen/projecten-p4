@@ -9,10 +9,6 @@
     <div class="cont">
         <?php require_once APPROOT . '/views/includes/navbar.php'; ?>
         <main>
-            <!-- Add Ticket Button -->
-            <div class="mb-3">
-                <a href="<?php echo URLROOT . '/overzichttickets/add'; ?>" class="btn btn-success">Ticket toevoegen</a>
-            </div>
             <!-- 1 table = one week -->
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -29,11 +25,14 @@
                             <th>Opmerking</th>
                             <th>Acties</th>
                             <th>
-                                <button type="button" class="btn btn-link p-0" data-bs-toggle="modal"
+                                <button type="button" class="btn btn-link p-2 me-3" style="font-size: 2rem;" data-bs-toggle="modal"
                                     data-bs-target="#scanModal" title="Scan">
-                                    <i class="fas fa-qrcode"></i>
+                                    <i class="fas fa-qrcode" style="font-size: 2.5rem;"></i>
                                 </button>
+                                <a href="<?php echo URLROOT . '/overzichttickets/add'; ?>" class="btn btn-success">Ticket toevoegen</a>
                             </th>
+                            <!-- <th>
+                            </th> -->
                         </tr>
                     </thead>
                     <tbody>

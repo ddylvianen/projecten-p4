@@ -62,32 +62,76 @@ class ticketModel
         return $this->db->execute();
     }
 
+    public function addPrijs($prijs)
+    {
+        $sql = "INSERT INTO Prijs (Tarief) VALUES (:tarief)";
+        $this->db->query($sql);
+        $this->db->bind(':tarief', $prijs);
+        $this->db->execute();
+        return $this->db->lastInsertId();
+    }
+
     public function addTicket($ticket)
     {
-        $sql = "INSERT INTO Ticket (VoorstellingId, Datum, Barcode, Status, Datumgewijzigd) VALUES (:voorstellingId, :datum, :barcode, :status, NOW())";
-        $this->db->query($sql);
+        $q = 'SELECT Datum, Tijd FROM Ticket WHERE Id = :id';
+        $this->db->query($q);
+        $this->db->bind(':id', $ticket['voorstelling']);
+        $this->db->execute();
+        $result = $this->db->single();
+        $date = $result->Datum;
+        $time = $result->Tijd;
+
+
+        $sql = "INSERT INTO Ticket (VoorstellingId, Datum, Barcode, Status, Datumgewijzigd, BezoekerId, PrijsId, Tijd) VALUES (:voorstellingId, :datum, :barcode, :status, NOW(), :bezoekerId, :prijsId, :tijd)";
+        $this->db->query($sql); 
         $this->db->bind(':voorstellingId', $ticket['voorstelling']);
-        $this->db->bind(':datum', $ticket['datum']);
-        $this->db->bind(':barcode', $ticket['barcode']);
+        $this->db->bind(':datum', $date);
+        $this->db->bind(':barcode', $ticket['barcode']);    
         $this->db->bind(':status', $ticket['status']);
+        $this->db->bind(':bezoekerId', $ticket['bezoeker']);    
+        $this->db->bind(':prijsId', $ticket['prijsId']);
+        $this->db->bind(':tijd', $time);
         return $this->db->execute();
     }
 
     public function updateTicket($ticket)
     {
-        $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Status = :status, Datumgewijzigd = NOW() WHERE Barcode = :barcode";
+        // 1. Haal de nieuwe datum en tijd op van de voorstelling
+        $sqlVoorstelling = "SELECT Datum, Tijd FROM Voorstelling WHERE Id = :voorstellingId";
+        $this->db->query($sqlVoorstelling);
+        $this->db->bind(':voorstellingId', $ticket['voorstelling']);
+        $voorstelling = $this->db->single();
+        $date = $voorstelling->Datum;
+        $time = $voorstelling->Tijd;
+
+        $sql = "UPDATE Prijs SET Tarief = :prijs WHERE Id = :prijsId";
+        $this->db->query($sql);
+        $this->db->bind(':prijs', $ticket['prijs']);
+        $this->db->bind(':prijsId', $ticket['prijsId']);
+        $this->db->execute();
+
+        // 3. Update het ticket met alle relevante velden
+        $sql = "UPDATE Ticket SET VoorstellingId = :voorstellingId, Datum = :datum, Tijd = :tijd, Status = :status, Datumgewijzigd = NOW(), BezoekerId = :bezoekerId, Barcode = :barcode WHERE Id = :id";
         $this->db->query($sql);
         $this->db->bind(':voorstellingId', $ticket['voorstelling']);
-        $this->db->bind(':datum', $ticket['datum']);
+        $this->db->bind(':datum', $date);
+        $this->db->bind(':tijd', $time);
         $this->db->bind(':status', $ticket['status']);
         $this->db->bind(':barcode', $ticket['barcode']);
-        $this->db->bind(':medewerkerId', $this->getMedewerkerIdByVoorstellingId($ticket['voorstelling']));
+        $this->db->bind(':bezoekerId', $ticket['bezoeker']);
+
+        $this->db->bind(':id', $ticket['id']);
         return $this->db->execute();
     }
 
     public function getTicket($ticket)
     {
-        $sql = "SELECT * FROM Ticket WHERE Barcode = :barcode";
+        $sql = "SELECT t.*, v.Naam AS VoorstellingNaam, b.Relatienummer, p.Tarief
+                FROM Ticket t
+                JOIN Voorstelling v ON t.VoorstellingId = v.Id
+                JOIN Bezoeker b ON t.BezoekerId = b.Id
+                JOIN Prijs p ON t.PrijsId = p.Id
+                WHERE Barcode = :barcode";
         $this->db->query($sql);
         $this->db->bind(':barcode', $ticket['barcode']);
         $this->db->execute();
@@ -117,7 +161,7 @@ class ticketModel
         $this->db->bind(':id', $voorstellingId);
         $this->db->execute();
         $result = $this->db->single();
-        return $result ? $result['MedewerkerId'] : null;
+        return $result ? $result->MedewerkerId : null;
     }
 
 }

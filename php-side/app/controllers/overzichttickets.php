@@ -26,8 +26,11 @@ class overzichttickets extends BaseController
     }
 
     public function add($data = [], $params = []) {
+        $bezoekers = $this->model->getBezoekers();
+        $voorstelling = $this->model->getVoorstellingen();
+
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $requiredFields = ['voorstelling', 'datum', 'barcode', 'status'];
+            $requiredFields = ['voorstelling', 'barcode', 'status', 'bezoeker', 'prijs'];
             $missing = [];
             foreach ($requiredFields as $field) {
                 if (empty($_POST[$field])) {
@@ -35,39 +38,39 @@ class overzichttickets extends BaseController
                 }
             }
             if (!empty($missing)) {
-                $voorstelling = $this->model->getVoorstellingen();
                 $error = 'Vul alle verplichte velden in.';
                 $formData = [
                     'voorstelling' => $_POST['voorstelling'] ?? '',
-                    'datum' => $_POST['datum'] ?? '',
                     'barcode' => $_POST['barcode'] ?? '',
-                    'status' => $_POST['status'] ?? ''
+                    'status' => $_POST['status'] ?? '',
+                    'bezoeker' => $_POST['bezoeker'] ?? '',
+                    'prijs' => $_POST['prijs'] ?? ''
                 ];
-                $this->view('overzichttickets/add', [
-                    'voorstelling' => $voorstelling,
-                    'error' => $error,
-                    'ticket' => (object)$formData
-                ]);
+                $this->view('overzichttickets/add', ['message' => $error, 'ticket' => (object)$formData, 'voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
                 return;
             }
+            // Eerst prijs toevoegen en prijsId ophalen
+            $prijsId = $this->model->addPrijs($_POST['prijs']);
             $ticketData = [
                 'voorstelling' => $_POST['voorstelling'],
-                'datum' => $_POST['datum'],
                 'barcode' => $_POST['barcode'],
-                'status' => $_POST['status']
+                'status' => $_POST['status'],
+                'bezoeker' => $_POST['bezoeker'],
+                'prijsId' => $prijsId
             ];
             $this->model->addTicket($ticketData);
             $this->redirect('overzichttickets/index', ['message' => 'Ticket toegevoegd!']);
         } else {
-            $bezoekers = $this->model->getBezoekers();
-            $voorstelling = $this->model->getVoorstellingen();
             $this->view('overzichttickets/add', ['voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
         }
     }
 
     public function update($data = [], $params = []) {
+        $bezoekers = $this->model->getBezoekers();
+        $voorstelling = $this->model->getVoorstellingen();
+        
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $requiredFields = ['voorstelling', 'datum', 'barcode', 'status'];
+            $requiredFields = ['voorstelling', 'barcode', 'status', 'bezoeker', 'prijs'];
             $missing = [];
             foreach ($requiredFields as $field) {
                 if (empty($_POST[$field])) {
@@ -75,26 +78,25 @@ class overzichttickets extends BaseController
                 }
             }
             if (!empty($missing)) {
-                $voorstelling = $this->model->getVoorstellingen();
                 $error = 'Vul alle verplichte velden in.';
                 $formData = [
                     'voorstelling' => $_POST['voorstelling'] ?? '',
-                    'datum' => $_POST['datum'] ?? '',
                     'barcode' => $_POST['barcode'] ?? '',
-                    'status' => $_POST['status'] ?? ''
+                    'status' => $_POST['status'] ?? '',
+                    'bezoeker' => $_POST['bezoeker'] ?? '',
+                    'prijs' => $_POST['prijs'] ?? ''
                 ];
-                $this->view('overzichttickets/edit', [
-                    'voorstelling' => $voorstelling,
-                    'error' => $error,
-                    'ticket' => (object)$formData
-                ]);
+                $this->view('overzichttickets/edit', ['message' => $error, 'ticket' => (object)$formData, 'voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
                 return;
             }
             $ticketData = [
+                'id' => $_POST['id'],
                 'voorstelling' => $_POST['voorstelling'],
-                'datum' => $_POST['datum'],
                 'barcode' => $_POST['barcode'],
-                'status' => $_POST['status']
+                'status' => $_POST['status'],
+                'bezoeker' => $_POST['bezoeker'],
+                'prijs' => $_POST['prijs'],
+                'prijsId' => $_POST['prijsId']
             ];
             $this->model->updateTicket($ticketData);
             $this->redirect('overzichttickets/index', ['message' => 'Ticket bijgewerkt!']);
@@ -102,9 +104,8 @@ class overzichttickets extends BaseController
             // Optionally, fetch ticket data for editing
             $barcode = $_GET['barcode'] ?? null;
             $querydata = ['barcode' => $barcode];
-            $voorstelling = $this->model->getVoorstellingen();
-            $bezoekers = $this->model->getBezoekers();
             $ticket = $barcode ? $this->model->getTicket(['barcode' => $barcode]) : null;
+            
             $this->view('overzichttickets/edit', ['ticket' => $ticket, 'voorstelling' => $voorstelling, 'bezoekers' => $bezoekers]);
         }
     }
