@@ -24,25 +24,20 @@ function isFormDirtyJQ($form, initialData) {
 }
 
 // Initialiseer validatie en change-detectie voor een formulier
-function setupFormFeaturesJQ(formId, requiredFields, changeAlert) {
+function setupFormFeaturesJQ(formId, requiredFields, changeAlert, requireDirty) {
     const $form = $('#' + formId);
     if ($form.length === 0) {
         console.warn(`Formulier '${formId}' niet gevonden in document.`);
         return;
     }
-    // Sla initiële data op
     let initialData = {};
-    $form.serializeArray().forEach(function(item) {
-        initialData[item.name] = item.value;
-    });
-    let isDirty = false;
-
-    // Change-detectie (optioneel)
-    if (changeAlert) {
-        $form.on('input change', function () {
-            isDirty = isFormDirtyJQ($form, initialData);
+    // Sla initiële data pas op NA volledige DOM load (en evt. plugins zoals Choices.js)
+    $(window).on('load', function() {
+        initialData = {};
+        $form.serializeArray().forEach(function(item) {
+            initialData[item.name] = item.value;
         });
-    }
+    });
 
     $form.on('submit', function (e) {
         // Validatie
@@ -53,6 +48,11 @@ function setupFormFeaturesJQ(formId, requiredFields, changeAlert) {
                 alert(errors.join('\n'));
                 return;
             }
+        }
+        // Vereis wijziging bij update
+        if (requireDirty && !isFormDirtyJQ($form, initialData)) {
+            e.preventDefault();
+            alert("Je hebt geen wijzigingen gemaakt aan het ticket.");
         }
         // Change-detectie bij submit (optioneel)
         if (changeAlert && !isFormDirtyJQ($form, initialData)) {
@@ -70,14 +70,23 @@ setupFormFeaturesJQ(
 );
 
 // Setup voor ticket-form (ticket toevoegen/bewerken)
-setupFormFeaturesJQ(
-    "ticket-form",
-    [
-        { id: 'voorstelling', name: 'Voorstelling' },
-        { id: 'barcode', name: 'Barcode' },
-        { id: 'status', name: 'Status' },
-        { id: 'bezoeker', name: 'Bezoeker' },
-        { id: 'prijs', name: 'Prijs' }
-    ],
-    false // geen change-detectie nodig
-);
+// Bij update (bewerken) is requireDirty true, bij toevoegen false
+$(function() {
+    const $ticketForm = $('#ticket-form');
+    if ($ticketForm.length) {
+        // Detecteer of het een update is (hidden id aanwezig)
+        const isUpdate = $ticketForm.find('input[name=\"id\"]').length > 0 && $ticketForm.find('input[name=\"id\"]').val() !== '';
+        setupFormFeaturesJQ(
+            "ticket-form",
+            [
+                { id: 'voorstelling', name: 'Voorstelling' },
+                { id: 'barcode', name: 'Barcode' },
+                { id: 'status', name: 'Status' },
+                { id: 'bezoeker', name: 'Bezoeker' },
+                { id: 'prijs', name: 'Prijs' }
+            ],
+            false, // geen losse change-alert
+            isUpdate // alleen bij update vereisen dat er iets gewijzigd is
+        );
+    }
+});
